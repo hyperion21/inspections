@@ -10,7 +10,6 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -21,12 +20,11 @@ import { UsersModule } from './users/users.module';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true, // demo only
+        synchronize: true,
       }),
     }),
-
-    UsersModule,
     AuthModule,
+    UsersModule,
     InspectionsModule,
     LocationsModule,
   ],

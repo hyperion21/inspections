@@ -15,7 +15,7 @@ export class AuthService {
     const user = await this.usersService.findByEmployeeId(employeeId);
     if (!user) throw new UnauthorizedException('User Not Found');
 
-    const match = await bcrypt.compare(password, user.passwordHash);
+    const match = await bcrypt.compare(password, user.password);
     if (!match) throw new UnauthorizedException('Incorrect Password');
 
     return user;

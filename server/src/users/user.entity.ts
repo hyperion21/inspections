@@ -14,7 +14,7 @@ export class User {
   employeeId: string;
 
   @Column()
-  passwordHash: string;
+  password: string;
 
   @Column()
   firstName: string;

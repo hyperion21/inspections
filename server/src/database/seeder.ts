@@ -1,5 +1,4 @@
 import { INestApplication } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { LocationsService } from '../locations/locations.service';
 import { UserRole } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
@@ -10,27 +9,25 @@ export async function runSeeders(app: INestApplication) {
 
   console.log('Seeding database...');
 
-  const saltRounds = 10;
-
   const existingManager = await usersService.findByEmployeeId('EMP001');
   if (!existingManager) {
-    const managerPassword = await bcrypt.hash('manager123', saltRounds);
+    const managerPassword = await usersService.hashPassword('manager123');
     await usersService.create({
       employeeId: 'EMP001',
       firstName: 'John',
       lastName: 'Manager',
       role: UserRole.MANAGER,
-      passwordHash: managerPassword,
+      password: managerPassword,
     });
 
     for (let i = 1; i <= 5; i++) {
-      const password = await bcrypt.hash('inspector123', saltRounds);
+      const inspectorPassword = await usersService.hashPassword('inspector123');
       await usersService.create({
         employeeId: `EMP10${i}`,
         firstName: `Inspector${i}`,
         lastName: `Test${i}`,
         role: UserRole.INSPECTOR,
-        passwordHash: password,
+        password: inspectorPassword,
       });
     }
     console.log('✅ Users seeded');
