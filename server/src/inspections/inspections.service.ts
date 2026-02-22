@@ -4,10 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Location } from '../locations/location.entity';
 import { User, UserRole } from '../users/user.entity';
 import { AssignInspectionDto } from './dto/assign-inspection.dto';
+import { CompleteInspectionDto } from './dto/complete-inspection.dto';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { UnassignInspectionDto } from './dto/unassign-inspection.dto';
 import { Inspection, InspectionStatus } from './inspection.entity';
@@ -119,6 +120,58 @@ export class InspectionsService {
     inspection.comments = null;
     inspection.startDateTime = null;
     inspection.status = InspectionStatus.ABANDONED;
+
+    return this.inspectionsRepo.save(inspection);
+  }
+
+  async findAssignedToInspector(
+    statuses: InspectionStatus[],
+  ): Promise<Inspection[]> {
+    return this.inspectionsRepo.find({
+      where: { assignedInspector: { id: 1 }, status: In(statuses) },
+      relations: ['assignedInspector'],
+    });
+  }
+
+  async findOne(id: number): Promise<Inspection> {
+    const inspection = await this.inspectionsRepo.findOne({
+      where: { id },
+      relations: ['assignedInspector', 'location'],
+    });
+
+    if (!inspection) throw new NotFoundException('Inspection not found');
+    return inspection;
+  }
+
+  async startInspection(id: number): Promise<Inspection> {
+    const inspection = await this.inspectionsRepo.findOne({
+      where: { id, status: InspectionStatus.YET_TO_START },
+    });
+
+    if (!inspection)
+      throw new NotFoundException('Inspection not found or already started');
+
+    inspection.status = InspectionStatus.IN_PROGRESS;
+    inspection.actualStartDateTime = new Date();
+
+    return this.inspectionsRepo.save(inspection);
+  }
+
+  async completeInspection(
+    id: number,
+    dto: CompleteInspectionDto,
+  ): Promise<Inspection> {
+    const inspection = await this.inspectionsRepo.findOne({
+      where: { id, status: InspectionStatus.IN_PROGRESS },
+    });
+
+    if (!inspection)
+      throw new NotFoundException('Inspection not found or not in progress');
+
+    inspection.status = InspectionStatus.COMPLETED;
+    inspection.endDateTime = new Date();
+    inspection.result = dto.result;
+    inspection.comments = dto.comments;
 
     return this.inspectionsRepo.save(inspection);
   }

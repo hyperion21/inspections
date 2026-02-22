@@ -20,6 +20,7 @@ import { Roles } from '../users/roles.decorator';
 import { RolesGuard } from '../users/roles.guard';
 import { UserRole } from '../users/user.entity';
 import { AssignInspectionDto } from './dto/assign-inspection.dto';
+import { CompleteInspectionDto } from './dto/complete-inspection.dto';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { InspectionDto } from './dto/inspection.dto';
 import { UnassignInspectionDto } from './dto/unassign-inspection.dto';
@@ -104,5 +105,66 @@ export class InspectionsController {
     @Body() dto: UnassignInspectionDto,
   ): Promise<Inspection> {
     return this.inspectionsService.unassign(Number(id), dto);
+  }
+
+  // inspectors
+  @Get('assigned')
+  @Roles(UserRole.INSPECTOR)
+  @ApiOperation({ summary: 'View inspections assigned to the inspector' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of inspections assigned to the inspector',
+    type: [InspectionDto],
+  })
+  listAssigned(@Query('status') status: string) {
+    const statuses: InspectionStatus[] = status
+      ? (status.split(',') as InspectionStatus[])
+      : [
+          InspectionStatus.YET_TO_START,
+          InspectionStatus.IN_PROGRESS,
+          InspectionStatus.COMPLETED,
+        ];
+    return this.inspectionsService.findAssignedToInspector(statuses);
+  }
+
+  @Get(':id')
+  @Roles(UserRole.INSPECTOR)
+  @ApiOperation({ summary: 'View details of a specific inspection' })
+  @ApiResponse({
+    status: 200,
+    description: 'Details of the inspection',
+    type: InspectionDto,
+  })
+  viewDetails(@Param('id') id: string): Promise<Inspection> {
+    return this.inspectionsService.findOne(Number(id));
+  }
+
+  @Roles(UserRole.INSPECTOR)
+  @ApiOperation({ summary: 'Move inspection to In Progress' })
+  @ApiResponse({
+    status: 200,
+    description: 'Inspection started',
+    type: InspectionDto,
+  })
+  startInspection(@Param('id') id: string): Promise<Inspection> {
+    return this.inspectionsService.startInspection(Number(id));
+  }
+
+  @Patch(':id/complete')
+  @Roles(UserRole.INSPECTOR)
+  @ApiOperation({ summary: 'Move inspection to Completed' })
+  @ApiResponse({
+    status: 200,
+    description: 'Inspection completed',
+    type: InspectionDto,
+  })
+  completeInspection(
+    @Param('id') id: string,
+    @Body() completeInspectionDto: CompleteInspectionDto,
+  ): Promise<Inspection> {
+    return this.inspectionsService.completeInspection(
+      Number(id),
+      completeInspectionDto,
+    );
   }
 }
