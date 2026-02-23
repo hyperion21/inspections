@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum UserRole {
   MANAGER = 'MANAGER',
@@ -27,4 +33,10 @@ export class User {
     enum: UserRole,
   })
   role: UserRole;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn({ type: 'datetime' })
+  lastUpdatedDate: Date;
 }

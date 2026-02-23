@@ -11,7 +11,6 @@ const ProfilePage = () => {
   const [lastName, setLastName] = useState<string>(user?.lastName || "");
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Toast state
   const [toastMessage, setToastMessage] = useState<string>("");
   const [toastVariant, setToastVariant] = useState<"success" | "danger">(
     "success",
