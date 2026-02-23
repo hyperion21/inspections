@@ -103,7 +103,7 @@ export class UsersController {
     status: 201,
     description: 'User successfully created',
   })
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<void> {
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await this.usersService.hashPassword(
       createUserDto.password,
     );

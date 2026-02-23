@@ -1,9 +1,9 @@
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { baseFetch } from "../../api/baseFetch";
-import CommonToast from "../../components/commonToast/CommonToast";
 import TopNavbar from "../../components/topNavbar/TopNavbar";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 
 const ProfilePage = () => {
   const { user, token, updateUser } = useAuth();
@@ -11,11 +11,7 @@ const ProfilePage = () => {
   const [lastName, setLastName] = useState<string>(user?.lastName || "");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastVariant, setToastVariant] = useState<"success" | "danger">(
-    "success",
-  );
-  const [showToast, setShowToast] = useState<boolean>(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -42,14 +38,10 @@ const ProfilePage = () => {
 
       if (updateUser) updateUser(updatedUser);
 
-      setToastVariant("success");
-      setToastMessage("Profile updated successfully");
-      setShowToast(true);
+      showToast("Profile updated successfully", "success");
     } catch (err) {
       console.error(err);
-      setToastVariant("danger");
-      setToastMessage("Error updating profile");
-      setShowToast(true);
+      showToast("Error updating profile", "danger");
     } finally {
       setLoading(false);
     }
@@ -93,13 +85,6 @@ const ProfilePage = () => {
           </div>
         </Form>
       </Container>
-
-      <CommonToast
-        show={showToast}
-        message={toastMessage}
-        variant={toastVariant}
-        onClose={() => setShowToast(false)}
-      />
     </>
   );
 };

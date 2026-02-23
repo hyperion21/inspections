@@ -43,12 +43,12 @@ export class UsersService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<void> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.findByEmployeeId(createUserDto.employeeId);
     if (user) throw new BadRequestException('User already exists');
 
     const newUser = this.usersRepository.create(createUserDto);
-    await this.usersRepository.save(newUser);
+    return await this.usersRepository.save(newUser);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
