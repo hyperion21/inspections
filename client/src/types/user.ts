@@ -6,3 +6,5 @@ export interface User {
   createdDate: Date;
   lastUpdatedDate: Date;
 }
+
+export type Inspector = Omit<User, "createdDate" | "lastUpdatedDate">;

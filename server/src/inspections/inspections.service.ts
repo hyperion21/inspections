@@ -72,7 +72,7 @@ export class InspectionsService {
     if (!inspector) throw new NotFoundException('Inspector not found');
 
     inspection.assignedInspector = inspector;
-    if (dto.startDateTime) inspection.startDateTime = dto.startDateTime;
+    inspection.startDateTime = dto.startDateTime ?? null;
 
     return this.inspectionsRepo.save(inspection);
   }

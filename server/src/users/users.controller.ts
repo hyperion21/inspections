@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -68,8 +69,19 @@ export class UsersController {
     description: 'List of all users',
     type: [UserDto],
   })
-  getAllUsers(): Promise<User[]> {
-    return this.usersService.findAll();
+  getAllUsers(@Query('role') role?: string): Promise<User[]> {
+    let roleEnum: UserRole | undefined;
+
+    if (role) {
+      if (!Object.values(UserRole).includes(role as UserRole)) {
+        throw new BadRequestException(
+          `Invalid role: ${role}. Allowed: ${Object.values(UserRole).join(', ')}`,
+        );
+      }
+      roleEnum = role as UserRole;
+    }
+
+    return this.usersService.findAll(roleEnum);
   }
 
   @Get(':id')

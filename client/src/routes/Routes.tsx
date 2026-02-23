@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import EmployeePage from "../pages/employee/EmployeePage";
+import InspectionsPage from "../pages/inspections/InspectionPage";
 import LoginPage from "../pages/login/LoginPage";
 import ProfilePage from "../pages/profile/ProfilePage";
 import ProtectedRoute from "./ProtectedRoute";
@@ -17,8 +18,10 @@ const AppRoutesComponent = () => {
       <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
 
       {/* All authenticated routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route path={AppRoutes.INSPECTIONS} element={<div>Inspections</div>} />
+      <Route
+        element={<ProtectedRoute allowedRoles={["MANAGER", "INSPECTOR"]} />}
+      >
+        <Route path={AppRoutes.INSPECTIONS} element={<InspectionsPage />} />
         <Route path={AppRoutes.PROFILE} element={<ProfilePage />} />
       </Route>
 
