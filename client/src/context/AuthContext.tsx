@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { AuthContextType, JwtPayload } from "../types/auth";
+import type { User } from "../types/user";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -8,22 +9,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token"),
   );
-  const [employeeId, setEmployeeId] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     if (token) {
-      const decoded = jwtDecode<JwtPayload>(token);
-
-      if (decoded.exp * 1000 > Date.now()) {
-        setEmployeeId(decoded.employeeId);
-        setRole(decoded.role);
-        setIsAuthenticated(true);
-      } else {
+      try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        if (decoded.exp * 1000 > Date.now()) {
+          setUser({
+            employeeId: decoded.employeeId,
+            role: decoded.role,
+            firstName: decoded.firstName,
+            lastName: decoded.lastName,
+          });
+          setIsAuthenticated(true);
+        } else {
+          logout();
+        }
+      } catch {
         logout();
       }
     }
+    setInitialized(true);
   }, [token]);
 
   const login = (newToken: string) => {
@@ -34,14 +44,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
-    setEmployeeId(null);
-    setRole(null);
+    setUser(null);
     setIsAuthenticated(false);
+  };
+
+  const updateUser = (updatedUser: Partial<User>) => {
+    if (!user) return;
+    setUser({ ...user, ...updatedUser });
   };
 
   return (
     <AuthContext.Provider
-      value={{ token, employeeId, role, isAuthenticated, login, logout }}
+      value={{
+        token,
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        updateUser,
+        initialized,
+      }}
     >
       {children}
     </AuthContext.Provider>

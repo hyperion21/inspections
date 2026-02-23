@@ -1,0 +1,6 @@
+@media (max-width: 426px) {
+  .dropdown-toggle {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}

@@ -1,7 +1,9 @@
 import { useState, type SyntheticEvent } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
-import { API_BASE_URL } from "../config";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
+import { useAuth } from "../../context/AuthContext";
+import "./styles.css";
 
 interface LoginRequest {
   employeeId: string;
@@ -12,8 +14,10 @@ interface LoginResponse {
   token: string;
 }
 
-const Login = () => {
+const LoginPage = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
 
@@ -34,14 +38,14 @@ const Login = () => {
     }
 
     const data: LoginResponse = await response.json();
-
     login(data.token);
+    navigate("/me");
   };
 
   return (
-    <Container className="d-flex justify-content-center mt-5">
-      <Card style={{ width: "400px" }}>
-        <Card.Body>
+    <Container className="login-container d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="p-4 login-card d-flex flex-column justify-content-center">
+        <Card.Body className="login-body">
           <h3 className="text-center mb-4">Employee Login</h3>
 
           <Form onSubmit={handleLogin}>
@@ -74,4 +78,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

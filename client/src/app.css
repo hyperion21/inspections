@@ -1,0 +1,11 @@
+@media (max-width: 575px) {
+  .default-button {
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+  .default-button {
+    width: 140px;
+  }
+}

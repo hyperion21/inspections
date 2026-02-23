@@ -1,21 +1,41 @@
+import { API_BASE_URL } from "../config";
+
 export const baseFetch = async (
   url: string,
   options: RequestInit = {},
   token?: string | null,
 ) => {
-  const headers = {
-    ...options.headers,
+  let body: BodyInit | undefined;
+
+  if (options.body !== null && options.body !== undefined) {
+    if (
+      typeof options.body === "object" &&
+      !(options.body instanceof FormData)
+    ) {
+      body = JSON.stringify(options.body);
+    } else {
+      body = options.body as BodyInit;
+    }
+  }
+
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
+    ...(options.headers as Record<string, string>),
   };
 
-  const response = await fetch(url, {
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
+    body,
     headers,
   });
 
   if (!response.ok) {
-    throw new Error("Request failed");
+    const errorText = await response.text();
+    throw new Error(errorText || "Request failed");
   }
 
   return response.json();
