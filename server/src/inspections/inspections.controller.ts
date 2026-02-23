@@ -146,6 +146,7 @@ export class InspectionsController {
     return this.inspectionsService.findOne(Number(id));
   }
 
+  @Post(':id/start')
   @Roles(UserRole.INSPECTOR)
   @ApiOperation({ summary: 'Move inspection to In Progress' })
   @ApiResponse({
@@ -157,7 +158,7 @@ export class InspectionsController {
     return this.inspectionsService.startInspection(Number(id));
   }
 
-  @Patch(':id/complete')
+  @Post(':id/complete')
   @Roles(UserRole.INSPECTOR)
   @ApiOperation({ summary: 'Move inspection to Completed' })
   @ApiResponse({

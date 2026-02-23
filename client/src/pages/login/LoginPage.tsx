@@ -21,7 +21,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
 
   if (initialized && isAuthenticated) {
-    return <Navigate to="/me" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const handleLogin = async (e: SyntheticEvent<HTMLFormElement>) => {

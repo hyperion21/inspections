@@ -153,6 +153,7 @@ export class InspectionsService {
       throw new NotFoundException('Inspection not found or already started');
 
     inspection.status = InspectionStatus.IN_PROGRESS;
+    inspection.startDateTime = inspection.startDateTime ?? new Date();
     inspection.actualStartDateTime = new Date();
 
     return this.inspectionsRepo.save(inspection);
