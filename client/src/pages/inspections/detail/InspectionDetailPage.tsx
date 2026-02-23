@@ -4,12 +4,14 @@ import { useParams } from "react-router-dom";
 import { baseFetch } from "../../../api/baseFetch";
 import TopNavbar from "../../../components/topNavbar/TopNavbar";
 import { useAuth } from "../../../context/AuthContext";
+import { useToast } from "../../../context/ToastContext";
 import type { Inspection } from "../../../types/inspection";
 import InspectionStatusTag from "../inspectionStatusTag/InspectionStatusTag";
 
 const InspectionDetailPage = () => {
   const { token } = useAuth();
   const { id } = useParams<{ id: string }>();
+  const { showToast } = useToast();
   const [inspection, setInspection] = useState<Inspection | null>(null);
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState<"PASS" | "FAIL">("PASS");
@@ -18,11 +20,16 @@ const InspectionDetailPage = () => {
   const fetchInspection = async () => {
     if (!token || !id) return;
     setLoading(true);
-    const data = await baseFetch(`/inspections/${id}`, {}, token);
-    setInspection(data);
-    setResult(data.result ?? "PASS");
-    setComments(data.comments ?? "");
-    setLoading(false);
+    try {
+      const data = await baseFetch(`/inspections/${id}`, {}, token);
+      setInspection(data);
+      setResult(data.result ?? "PASS");
+      setComments(data.comments ?? "");
+    } catch (err: any) {
+      showToast(err.message || "Failed to fetch inspection", "danger");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -31,25 +38,35 @@ const InspectionDetailPage = () => {
 
   const handleStart = async () => {
     if (!token || !inspection) return;
-    await baseFetch(
-      `/inspections/${inspection.id}/start`,
-      { method: "POST" },
-      token,
-    );
-    await fetchInspection();
+    try {
+      await baseFetch(
+        `/inspections/${inspection.id}/start`,
+        { method: "POST" },
+        token,
+      );
+      showToast("Inspection started", "success");
+      await fetchInspection();
+    } catch (err: any) {
+      showToast(err.message || "Failed to start inspection", "danger");
+    }
   };
 
   const handleComplete = async () => {
     if (!token || !inspection) return;
-    await baseFetch(
-      `/inspections/${inspection.id}/complete`,
-      {
-        method: "POST",
-        body: JSON.stringify({ result, comments }),
-      },
-      token,
-    );
-    await fetchInspection();
+    try {
+      await baseFetch(
+        `/inspections/${inspection.id}/complete`,
+        {
+          method: "POST",
+          body: JSON.stringify({ result, comments }),
+        },
+        token,
+      );
+      showToast("Inspection completed", "success");
+      await fetchInspection();
+    } catch (err: any) {
+      showToast(err.message || "Failed to complete inspection", "danger");
+    }
   };
 
   const calculateDuration = () => {
@@ -84,14 +101,12 @@ const InspectionDetailPage = () => {
         </p>
 
         {inspection.status !== "YET_TO_START" && (
-          <>
-            <p>
-              Actual Start:{" "}
-              {inspection.actualStartDateTime
-                ? new Date(inspection.actualStartDateTime).toLocaleString()
-                : "-"}
-            </p>
-          </>
+          <p>
+            Actual Start:{" "}
+            {inspection.actualStartDateTime
+              ? new Date(inspection.actualStartDateTime).toLocaleString()
+              : "-"}
+          </p>
         )}
 
         {inspection.status === "COMPLETED" && (

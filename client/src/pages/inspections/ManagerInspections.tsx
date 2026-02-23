@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Row, Table } from "react-bootstrap";
 import { baseFetch } from "../../api/baseFetch";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import type { Inspection } from "../../types/inspection";
 import AssignInspectorModal from "./AssignInspectorModal";
 import NewInspectionModal from "./NewInspectionModal";
@@ -9,6 +10,7 @@ import InspectionStatusTag from "./inspectionStatusTag/InspectionStatusTag";
 
 const ManagerInspections = () => {
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [showNewModal, setShowNewModal] = useState(false);
 
@@ -24,8 +26,12 @@ const ManagerInspections = () => {
 
   const fetchInspections = async () => {
     if (!token) return;
-    const data = await baseFetch("/inspections", {}, token);
-    setInspections(data);
+    try {
+      const data = await baseFetch("/inspections", {}, token);
+      setInspections(data);
+    } catch (err: any) {
+      showToast(err.message || "Failed to fetch inspections", "danger");
+    }
   };
 
   useEffect(() => {
@@ -49,6 +55,19 @@ const ManagerInspections = () => {
     setSelectedAssignedInspectorId(assignedInspectorId);
     setShowAssignModal(true);
   };
+
+  // Callback when new inspection is successfully created
+  const handleNewInspectionCreated = async () => {
+    showToast("Inspection created successfully", "success");
+    await fetchInspections();
+  };
+
+  // Callback when inspector assignment is successful
+  const handleAssignSuccess = async () => {
+    showToast("Inspector assigned successfully", "success");
+    await fetchInspections();
+  };
+
   return (
     <>
       <Row className="mb-3">
@@ -130,14 +149,14 @@ const ManagerInspections = () => {
       <NewInspectionModal
         show={showNewModal}
         onHide={() => setShowNewModal(false)}
-        onCreated={fetchInspections}
+        onCreated={handleNewInspectionCreated}
       />
 
       {selectedInspectionId !== null && (
         <AssignInspectorModal
           show={showAssignModal}
           onHide={() => setShowAssignModal(false)}
-          onAssigned={fetchInspections}
+          onAssigned={handleAssignSuccess}
           inspectionId={selectedInspectionId}
           currentStartDateTime={selectedInspectionStart}
           assignedInspectorId={selectedAssignedInspectorId}
