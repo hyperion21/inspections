@@ -9,9 +9,9 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    igin: 'http://localhost:5137',
-    mthods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    alowedHeaders: 'Content-Type, Authorization',
+    origin: 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
   });
 
   const swaggerConfig = new DocumentBuilder()
