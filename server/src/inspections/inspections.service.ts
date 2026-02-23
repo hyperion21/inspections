@@ -107,9 +107,9 @@ export class InspectionsService {
       throw new NotFoundException('Inspection not found');
     }
 
-    if (inspection.status !== InspectionStatus.YET_TO_START) {
+    if (inspection.status !== InspectionStatus.IN_PROGRESS) {
       throw new BadRequestException(
-        'Only Yet to Start inspections can be abandoned',
+        'Only in progress inspections can be abandoned',
       );
     }
 

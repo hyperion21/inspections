@@ -8,6 +8,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
+  app.enableCors({
+    igin: 'http://localhost:5137',
+    mthods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    alowedHeaders: 'Content-Type, Authorization',
+  });
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Inspections API')
     .setDescription('API for recording safety inspections')
