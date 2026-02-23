@@ -125,10 +125,11 @@ export class InspectionsService {
   }
 
   async findAssignedToInspector(
+    employeeId: string,
     statuses: InspectionStatus[],
   ): Promise<Inspection[]> {
     return this.inspectionsRepo.find({
-      where: { assignedInspector: { id: 1 }, status: In(statuses) },
+      where: { assignedInspector: { employeeId }, status: In(statuses) },
       relations: ['assignedInspector'],
     });
   }

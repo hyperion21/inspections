@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,7 +19,7 @@ import {
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../users/roles.decorator';
 import { RolesGuard } from '../users/roles.guard';
-import { UserRole } from '../users/user.entity';
+import { User, UserRole } from '../users/user.entity';
 import { AssignInspectionDto } from './dto/assign-inspection.dto';
 import { CompleteInspectionDto } from './dto/complete-inspection.dto';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
@@ -116,7 +117,10 @@ export class InspectionsController {
     description: 'List of inspections assigned to the inspector',
     type: [InspectionDto],
   })
-  listAssigned(@Query('status') status: string) {
+  listAssigned(
+    @Request() req: { user: User },
+    @Query('status') status: string,
+  ) {
     const statuses: InspectionStatus[] = status
       ? (status.split(',') as InspectionStatus[])
       : [
@@ -124,7 +128,10 @@ export class InspectionsController {
           InspectionStatus.IN_PROGRESS,
           InspectionStatus.COMPLETED,
         ];
-    return this.inspectionsService.findAssignedToInspector(statuses);
+    return this.inspectionsService.findAssignedToInspector(
+      req.user.employeeId,
+      statuses,
+    );
   }
 
   @Get(':id')
