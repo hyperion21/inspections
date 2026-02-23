@@ -20,8 +20,8 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findByEmployeeId(employeeId: string) {
-    return this.usersRepository.findOne({ where: { employeeId } });
+  async findByEmployeeId(employeeId: string) {
+    return await this.usersRepository.findOne({ where: { employeeId } });
   }
 
   async hashPassword(password: string): Promise<string> {

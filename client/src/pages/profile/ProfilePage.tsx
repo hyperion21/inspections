@@ -1,12 +1,7 @@
 import { useEffect, useState, type SyntheticEvent } from "react";
-import {
-  Button,
-  Container,
-  Form,
-  Toast,
-  ToastContainer,
-} from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { baseFetch } from "../../api/baseFetch";
+import CommonToast from "../../components/commonToast/CommonToast";
 import TopNavbar from "../../components/topNavbar/TopNavbar";
 import { useAuth } from "../../context/AuthContext";
 
@@ -100,17 +95,12 @@ const ProfilePage = () => {
         </Form>
       </Container>
 
-      <ToastContainer position="bottom-center" className="p-3">
-        <Toast
-          bg={toastVariant}
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-        >
-          <Toast.Body className="text-white">{toastMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
+      <CommonToast
+        show={showToast}
+        message={toastMessage}
+        variant={toastVariant}
+        onClose={() => setShowToast(false)}
+      />
     </>
   );
 };

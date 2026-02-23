@@ -3,8 +3,6 @@ import type { User } from "./user";
 export interface JwtPayload {
   employeeId: string;
   role: string;
-  firstName: string;
-  lastName: string;
   exp: number;
 }
 

@@ -1,6 +1,6 @@
 import { useState, type SyntheticEvent } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config";
 import { useAuth } from "../../context/AuthContext";
 import "./styles.css";
@@ -15,11 +15,14 @@ interface LoginResponse {
 }
 
 const LoginPage = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const { login, isAuthenticated, initialized } = useAuth();
 
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
+
+  if (initialized && isAuthenticated) {
+    return <Navigate to="/me" replace />;
+  }
 
   const handleLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +42,6 @@ const LoginPage = () => {
 
     const data: LoginResponse = await response.json();
     login(data.token);
-    navigate("/me");
   };
 
   return (
