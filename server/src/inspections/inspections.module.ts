@@ -10,5 +10,6 @@ import { InspectionsService } from './inspections.service';
   imports: [TypeOrmModule.forFeature([Inspection, Location, User])],
   providers: [InspectionsService],
   controllers: [InspectionsController],
+  exports: [InspectionsService],
 })
 export class InspectionsModule {}

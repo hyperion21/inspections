@@ -136,7 +136,7 @@ export class UsersController {
   deleteUser(
     @Request() req: { user: User },
     @Param('id') id: string,
-  ): Promise<void> {
+  ): Promise<User> {
     if (req.user.employeeId === id) {
       throw new BadRequestException('Managers cannot delete their own account');
     }

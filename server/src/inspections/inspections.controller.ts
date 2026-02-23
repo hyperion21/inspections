@@ -24,7 +24,6 @@ import { AssignInspectionDto } from './dto/assign-inspection.dto';
 import { CompleteInspectionDto } from './dto/complete-inspection.dto';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { InspectionDto } from './dto/inspection.dto';
-import { UnassignInspectionDto } from './dto/unassign-inspection.dto';
 import { Inspection, InspectionStatus } from './inspection.entity';
 import { InspectionsService } from './inspections.service';
 
@@ -101,11 +100,8 @@ export class InspectionsController {
     description: 'Inspector unassigned',
     type: InspectionDto,
   })
-  unassign(
-    @Param('id') id: string,
-    @Body() dto: UnassignInspectionDto,
-  ): Promise<Inspection> {
-    return this.inspectionsService.unassign(Number(id), dto);
+  unassign(@Param('id') id: string): Promise<Inspection> {
+    return this.inspectionsService.unassign(Number(id));
   }
 
   // inspectors

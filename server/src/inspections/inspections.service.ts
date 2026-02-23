@@ -10,7 +10,6 @@ import { User, UserRole } from '../users/user.entity';
 import { AssignInspectionDto } from './dto/assign-inspection.dto';
 import { CompleteInspectionDto } from './dto/complete-inspection.dto';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
-import { UnassignInspectionDto } from './dto/unassign-inspection.dto';
 import { Inspection, InspectionStatus } from './inspection.entity';
 
 @Injectable()
@@ -77,7 +76,7 @@ export class InspectionsService {
     return this.inspectionsRepo.save(inspection);
   }
 
-  async unassign(id: number, dto: UnassignInspectionDto): Promise<Inspection> {
+  async unassign(id: number): Promise<Inspection> {
     const inspection = await this.inspectionsRepo.findOne({
       where: { id },
       relations: ['assignedInspector'],
@@ -92,8 +91,6 @@ export class InspectionsService {
     inspection.endDateTime = null;
     inspection.result = null;
     inspection.comments = null;
-    inspection.startDateTime = dto.startDateTime ?? null;
-    inspection.status = InspectionStatus.YET_TO_START;
 
     return this.inspectionsRepo.save(inspection);
   }

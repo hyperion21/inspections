@@ -43,7 +43,7 @@ const InspectorInspections = () => {
         <Col key={insp.id} xs={12} sm={12} md={4}>
           <Card
             style={{
-              height: "180px",
+              height: "200px",
               cursor: "pointer",
               opacity: insp.status === "COMPLETED" ? 0.7 : 1,
             }}
@@ -55,14 +55,17 @@ const InspectorInspections = () => {
                 <InspectionStatusTag status={insp.status} />
               </Card.Subtitle>
               <Card.Text>
-                Planned Start:{" "}
-                {insp.startDateTime
-                  ? new Date(insp.startDateTime).toLocaleString()
-                  : "-"}
+                Start Date:{" "}
+                {new Date(
+                  insp.actualStartDateTime ?? insp.startDateTime ?? "-",
+                ).toLocaleString()}
               </Card.Text>
               {(insp.status === "IN_PROGRESS" ||
                 insp.status === "COMPLETED") && (
                 <Card.Text>Duration: {calculateDuration(insp)}</Card.Text>
+              )}
+              {insp.status === "COMPLETED" && (
+                <Card.Text>Result: {insp.result}</Card.Text>
               )}
             </Card.Body>
           </Card>

@@ -14,6 +14,9 @@ export class UserDto {
   @ApiProperty({ enum: UserRole })
   role: UserRole;
 
+  @ApiProperty({ example: true })
+  isActive: boolean;
+
   @ApiProperty()
   createdDate: Date;
 
