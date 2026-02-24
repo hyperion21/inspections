@@ -16,11 +16,15 @@ Inspection of certain parts of factory
    ```
    cd server
    ```
-2. Reset the database:
+2. Run npm install
+   ```
+   npm i
+   ```
+3. Reset the database:
    ```
    npm run reset-db
    ```
-3. Start the backend in development mode:
+4. Start the backend in development mode:
    ```
    npm run start:dev
    ```
@@ -31,7 +35,11 @@ Inspection of certain parts of factory
    ```
    cd client
    ```
-2. Start the frontend in development mode:
+2. Run npm install
+   ```
+   npm i
+   ```
+3. Start the frontend in development mode:
    ```
    npm run dev
    ```
